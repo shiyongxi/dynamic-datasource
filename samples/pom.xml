@@ -15,6 +15,7 @@
     <modules>
         <module>dynamic-add-remove-datasource-samples</module>
         <module>dynamic-druid-mybatis-sample</module>
+        <module>dynamic-tx-sample</module>
     </modules>
 
     <dependencies>

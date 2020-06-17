@@ -1,0 +1,57 @@
+server:
+  port: 8081
+  undertow:
+    accesslog:
+      enabled: true
+      dir: ../logs
+      pattern: common
+      prefix: access_log
+      suffix: .log
+    io-threads: 4
+    worker-threads: 32
+    buffer-size: 1024
+    direct-buffers: true
+
+spring:
+  datasource:
+    druid:
+      stat-view-servlet:
+        enabled: true
+    dynamic:
+      druid:
+        filters: stat
+      datasource:
+        master:
+          username: root
+          password: ""
+          url: jdbc:mysql://127.0.0.1:3306/test
+          driver-class-name: com.mysql.jdbc.Driver
+          schema: db/schema.sql
+          druid: #这里可以重写默认值
+            initial-size: 5
+            public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKUVA/IL/iON8f63bv2i/pIAK+1sXY228slLkTKrI9axwBMIoPV7+PqdRTv6uqMl3j6nei0EDBWEu/Wp/qOQ/ScCAwEAAQ==
+        slave_1:
+          username: root
+          password: ""
+          url: jdbc:mysql://127.0.0.1:3306/test1
+          driver-class-name: com.mysql.jdbc.Driver
+          schema: db/schema.sql
+          druid:
+            initial-size: 6
+        slave_2:
+          username: root
+          password: ""
+          url: jdbc:mysql://127.0.0.1:3306/test2
+          driver-class-name: com.mysql.jdbc.Driver
+          schema: db/schema.sql
+        slave_3:
+          username: root
+          password: ""
+          url: jdbc:mysql://127.0.0.1:3306/test3
+          driver-class-name: com.mysql.jdbc.Driver
+          schema: db/schema.sql
+
+logging:
+  level:
+    com.yx: debug
+    org.springframework.jdbc.datasource.init: debug

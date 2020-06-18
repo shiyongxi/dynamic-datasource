@@ -20,22 +20,22 @@ spring:
           username: root
           password: ""
           url: jdbc:mysql://127.0.0.1:3306/test
-          driver-class-name: com.mysql.jdbc.Driver
+          driver-class-name: com.mysql.cj.jdbc.Driver
         slave_1:
           username: root
           password: ""
           url: jdbc:mysql://127.0.0.1:3306/test1
-          driver-class-name: com.mysql.jdbc.Driver
+          driver-class-name: com.mysql.cj.jdbc.Driver
         slave_2:
           username: root
           password: ""
           url: jdbc:mysql://127.0.0.1:3306/test2
-          driver-class-name: com.mysql.jdbc.Driver
+          driver-class-name: com.mysql.cj.jdbc.Driver
         slave_3:
           username: root
           password: ""
           url: jdbc:mysql://127.0.0.1:3306/test3
-          driver-class-name: com.mysql.jdbc.Driver
+          driver-class-name: com.mysql.cj.jdbc.Driver
 
 logging:
   level:

@@ -20,7 +20,7 @@ public class DataSourceDTO {
     private String pollName;
 
     @NotBlank
-    @ApiModelProperty(value = "JDBC driver", example = "com.mysql.jdbc.Driver")
+    @ApiModelProperty(value = "JDBC driver", example = "com.mysql.cj.jdbc.Driver")
     private String driverClassName;
 
     @NotBlank

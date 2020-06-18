@@ -16,6 +16,8 @@
         <module>dynamic-add-remove-datasource-samples</module>
         <module>dynamic-druid-mybatis-sample</module>
         <module>dynamic-tx-sample</module>
+        <module>dynamic-seata-sample</module>
+        <module>dynamic-spel-sample</module>
     </modules>
 
     <dependencies>
@@ -43,6 +45,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
         </dependency>
 
         <dependency>

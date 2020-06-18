@@ -25,7 +25,7 @@ spring:
           username: root
           password: ""
           url: jdbc:mysql://127.0.0.1:3306/test
-          driver-class-name: com.mysql.jdbc.Driver
+          driver-class-name: com.mysql.cj.jdbc.Driver
           schema: db/schema.sql
           druid: #这里可以重写默认值
             initial-size: 5
@@ -34,7 +34,7 @@ spring:
           username: root
           password: ""
           url: jdbc:mysql://127.0.0.1:3306/test1
-          driver-class-name: com.mysql.jdbc.Driver
+          driver-class-name: com.mysql.cj.jdbc.Driver
           schema: db/schema.sql
           druid:
             initial-size: 6
@@ -42,13 +42,13 @@ spring:
           username: root
           password: ""
           url: jdbc:mysql://127.0.0.1:3306/test2
-          driver-class-name: com.mysql.jdbc.Driver
+          driver-class-name: com.mysql.cj.jdbc.Driver
           schema: db/schema.sql
         slave_3:
           username: root
           password: ""
           url: jdbc:mysql://127.0.0.1:3306/test3
-          driver-class-name: com.mysql.jdbc.Driver
+          driver-class-name: com.mysql.cj.jdbc.Driver
           schema: db/schema.sql
 
 logging:

@@ -14,10 +14,9 @@ import org.springframework.beans.factory.BeanFactoryAware;
 /**
  * @auther: yx
  * @Date: 2020-06-16 18:13
- * @Description: DynamicDataSourceAnnotationAdvisor
+ * @Description: DS 注解切点类
  */
-public class DynamicDataSourceAnnotationAdvisor  extends AbstractPointcutAdvisor implements
-        BeanFactoryAware {
+public class DynamicDataSourceAnnotationAdvisor  extends AbstractPointcutAdvisor implements BeanFactoryAware {
 
     private Advice advice;
 

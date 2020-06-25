@@ -14,4 +14,8 @@ public interface UserService {
     List selectSpelByKey(String tenantName);
 
     List selecSpelByTenant(User user);
+
+    List regex();
+
+    List expression();
 }

@@ -40,4 +40,14 @@ public class UserServiceImpl implements UserService {
     public List selecSpelByTenant(User user) {
         return userMapper.selectUsers();
     }
+
+    @Override
+    public List regex() {
+        return userMapper.selectUsers();
+    }
+
+    @Override
+    public List expression() {
+        return userMapper.selectUsers();
+    }
 }

@@ -25,9 +25,8 @@ import java.util.Set;
 @Api(tags = "添加删除数据源")
 public class LoadController {
     private final DataSource dataSource;
-    private final DataSourceCreator dataSourceCreator;
+    private final DataSourceCreatorImpl dataSourceCreator;
     private final BasicDataSourceCreator basicDataSourceCreator;
-    private final JndiDataSourceCreator jndiDataSourceCreator;
     private final DruidDataSourceCreator druidDataSourceCreator;
     private final HikariDataSourceCreator hikariDataSourceCreator;
 
@@ -57,15 +56,6 @@ public class LoadController {
         DynamicRoutingDataSource ds = (DynamicRoutingDataSource) dataSource;
         DataSource dataSource = basicDataSourceCreator.createDataSource(dataSourceProperty);
         ds.addDataSource(dto.getPollName(), dataSource);
-        return ds.getCurrentDataSources().keySet();
-    }
-
-    @PostMapping("/addJndi")
-    @ApiOperation("添加JNDI数据源")
-    public Set<String> addJndi(String pollName, String jndiName) {
-        DynamicRoutingDataSource ds = (DynamicRoutingDataSource) dataSource;
-        DataSource dataSource = jndiDataSourceCreator.createDataSource(jndiName);
-        ds.addDataSource(pollName, dataSource);
         return ds.getCurrentDataSources().keySet();
     }
 

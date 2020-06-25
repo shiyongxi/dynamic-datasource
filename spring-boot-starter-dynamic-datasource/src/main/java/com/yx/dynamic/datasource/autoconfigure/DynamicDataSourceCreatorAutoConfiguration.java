@@ -3,6 +3,7 @@ package com.yx.dynamic.datasource.autoconfigure;
 import com.yx.dynamic.datasource.creator.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -24,26 +25,16 @@ public class DynamicDataSourceCreatorAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public DataSourceCreator dataSourceCreator() {
-        DataSourceCreator dataSourceCreator = new DataSourceCreator();
-        dataSourceCreator.setBasicDataSourceCreator(basicDataSourceCreator());
-        dataSourceCreator.setJndiDataSourceCreator(jndiDataSourceCreator());
-        dataSourceCreator.setDruidDataSourceCreator(druidDataSourceCreator());
-        dataSourceCreator.setHikariDataSourceCreator(hikariDataSourceCreator());
-        dataSourceCreator.setGlobalPublicKey(properties.getPublicKey());
-        return dataSourceCreator;
+    public DataSourceCreatorImpl dataSourceCreator(BasicDataSourceCreator basicDataSourceCreator,
+                                                   @Autowired(required = false) DruidDataSourceCreator druidDataSourceCreator,
+                                                   @Autowired(required = false) HikariDataSourceCreator hikariDataSourceCreator) {
+        return new DataSourceCreatorImpl(basicDataSourceCreator, druidDataSourceCreator, hikariDataSourceCreator, properties.getPublicKey());
     }
 
     @Bean
     @ConditionalOnMissingBean
     public BasicDataSourceCreator basicDataSourceCreator() {
         return new BasicDataSourceCreator();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public JndiDataSourceCreator jndiDataSourceCreator() {
-        return new JndiDataSourceCreator();
     }
 
     @Bean

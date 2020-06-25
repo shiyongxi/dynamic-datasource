@@ -4,22 +4,19 @@ import com.yx.dynamic.datasource.matcher.ExpressionMatcher;
 import com.yx.dynamic.datasource.matcher.Matcher;
 import com.yx.dynamic.datasource.matcher.RegexMatcher;
 import com.yx.dynamic.datasource.processor.DsProcessor;
-import com.yx.dynamic.datasource.toolkit.DynamicDataSourceContextHolder;
-import lombok.Setter;
 import org.aopalliance.aop.Advice;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.aop.Pointcut;
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.aop.support.ComposablePointcut;
+import org.springframework.aop.support.JdkRegexpMethodPointcut;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.util.CollectionUtils;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @auther: yx
@@ -27,44 +24,13 @@ import java.util.Map;
  * @Description: DynamicDataSourceAdvisor
  */
 public class DynamicDataSourceAdvisor extends AbstractPointcutAdvisor implements BeanFactoryAware {
-
-    /**
-     * The identification of SPEL
-     */
-    private static final String DYNAMIC_PREFIX = "#";
-
-    @Setter
-    private DsProcessor dsProcessor;
-
     private Advice advice;
 
     private Pointcut pointcut;
 
-    private Map<String, String> matchesCache = new HashMap<>();
-
-    public DynamicDataSourceAdvisor(List<Matcher> matchers) {
+    public DynamicDataSourceAdvisor(List<Matcher> matchers, String ds, DsProcessor dsProcessor) {
         this.pointcut = buildPointcut(matchers);
-        this.advice = buildAdvice();
-    }
-
-    private Advice buildAdvice() {
-        return new MethodInterceptor() {
-            @Override
-            public Object invoke(MethodInvocation invocation) throws Throwable {
-                try {
-                    Method method = invocation.getMethod();
-                    String methodPath = invocation.getThis().getClass().getName() + "." + method.getName();
-                    String key = matchesCache.get(methodPath);
-                    if (key != null && !key.isEmpty() && key.startsWith(DYNAMIC_PREFIX)) {
-                        key = dsProcessor.determineDatasource(invocation, key);
-                    }
-                    DynamicDataSourceContextHolder.push(key);
-                    return invocation.proceed();
-                } finally {
-                    DynamicDataSourceContextHolder.poll();
-                }
-            }
-        };
+        this.advice = new DynamicDataSourceInterceptor(ds, dsProcessor);
     }
 
     @Override
@@ -86,26 +52,38 @@ public class DynamicDataSourceAdvisor extends AbstractPointcutAdvisor implements
 
     private Pointcut buildPointcut(List<Matcher> matchers) {
         ComposablePointcut composablePointcut = null;
+        List<String> jdkPatterns = null;
         for (Matcher matcher : matchers) {
             if (matcher instanceof RegexMatcher) {
-                RegexMatcher regexMatcher = (RegexMatcher) matcher;
-                Pointcut pointcut = new DynamicJdkRegexpMethodPointcut(regexMatcher.getPattern(), regexMatcher.getDs(), matchesCache);
-                if (composablePointcut == null) {
-                    composablePointcut = new ComposablePointcut(pointcut);
-                } else {
-                    composablePointcut.union(pointcut);
+                if (jdkPatterns == null) {
+                    jdkPatterns = new ArrayList<>();
                 }
+                RegexMatcher regexMatcher = (RegexMatcher) matcher;
+                jdkPatterns.add(regexMatcher.getPattern());
             } else {
                 ExpressionMatcher expressionMatcher = (ExpressionMatcher) matcher;
-                Pointcut pointcut = new DynamicAspectJExpressionPointcut(expressionMatcher.getExpression(), expressionMatcher.getDs(),
-                        matchesCache);
+                AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+                pointcut.setExpression(expressionMatcher.getExpression());
+
                 if (composablePointcut == null) {
-                    composablePointcut = new ComposablePointcut(pointcut);
+                    composablePointcut = new ComposablePointcut((Pointcut) pointcut);
                 } else {
-                    composablePointcut.union(pointcut);
+                    composablePointcut.union((Pointcut) pointcut);
                 }
             }
         }
+
+        if (!CollectionUtils.isEmpty(jdkPatterns)) {
+            JdkRegexpMethodPointcut pointcut = new JdkRegexpMethodPointcut();
+            pointcut.setPatterns(jdkPatterns.toArray(new String[jdkPatterns.size()]));
+
+            if (composablePointcut == null) {
+                composablePointcut = new ComposablePointcut((Pointcut) pointcut);
+            } else {
+                composablePointcut.union((Pointcut) pointcut);
+            }
+        }
+
         return composablePointcut;
     }
 }

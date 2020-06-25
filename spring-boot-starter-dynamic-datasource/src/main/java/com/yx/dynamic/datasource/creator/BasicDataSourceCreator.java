@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  */
 @Data
 @Slf4j
-public class BasicDataSourceCreator {
+public class BasicDataSourceCreator implements DataSourceCreator {
     private static Method createMethod;
     private static Method typeMethod;
     private static Method urlMethod;

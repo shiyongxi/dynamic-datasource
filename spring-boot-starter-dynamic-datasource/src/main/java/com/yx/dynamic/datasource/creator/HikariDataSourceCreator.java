@@ -4,8 +4,8 @@ import com.yx.dynamic.datasource.autoconfigure.DataSourceProperty;
 import com.yx.dynamic.datasource.autoconfigure.hikari.HikariCpConfig;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 
 import javax.sql.DataSource;
 
@@ -15,10 +15,20 @@ import javax.sql.DataSource;
  * @Description: Hikari数据源创建器
  */
 @Data
-@AllArgsConstructor
-public class HikariDataSourceCreator {
+@ConditionalOnClass(HikariDataSource.class)
+public class HikariDataSourceCreator implements DataSourceCreator {
     private HikariCpConfig hikariCpConfig;
 
+    public HikariDataSourceCreator(HikariCpConfig hikariCpConfig) {
+        this.hikariCpConfig = hikariCpConfig;
+
+        try {
+            Class.forName(HikariDataSource.class.getName());
+        } catch (ClassNotFoundException ignored) {
+        }
+    }
+
+    @Override
     public DataSource createDataSource(DataSourceProperty dataSourceProperty) {
         HikariConfig config = dataSourceProperty.getHikari().toHikariConfig(hikariCpConfig);
         config.setUsername(dataSourceProperty.getUsername());

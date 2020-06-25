@@ -14,12 +14,13 @@ import java.lang.reflect.Method;
 /**
  * @auther: yx
  * @Date: 2020-06-16 18:13
- * @Description: DynamicDataSourceAnnotationInterceptor
+ * @Description: DS 注解核心逻辑处理类
  */
 public class DynamicDataSourceAnnotationInterceptor implements MethodInterceptor {
 
     /**
-     * The identification of SPEL.
+     * SPEL 表达式前缀.
+     * 有这个前缀时，走 dsProcessor 逻辑获取真实ds
      */
     private static final String DYNAMIC_PREFIX = "#";
     private static final DataSourceClassResolver RESOLVER = new DataSourceClassResolver();
@@ -40,7 +41,9 @@ public class DynamicDataSourceAnnotationInterceptor implements MethodInterceptor
         Method method = invocation.getMethod();
         DS ds = method.isAnnotationPresent(DS.class) ? method.getAnnotation(DS.class)
                 : AnnotationUtils.findAnnotation(RESOLVER.targetClass(invocation), DS.class);
+
         String key = ds.value();
+
         return (!key.isEmpty() && key.startsWith(DYNAMIC_PREFIX)) ? dsProcessor.determineDatasource(invocation, key) : key;
     }
 }

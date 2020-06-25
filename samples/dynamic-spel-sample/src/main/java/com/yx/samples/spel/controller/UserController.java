@@ -42,4 +42,16 @@ public class UserController {
     public List<User> usersFromSpelExpression2(@RequestParam(value = "dsName", defaultValue = "") String dsName) {
         return userService.selecSpelByTenant(User.builder().tenantName(dsName).build());
     }
+
+    @ApiOperation("通过切面Regex方式配置")
+    @GetMapping("/spel-aop-regex")
+    public List<User> usersFromSpelRegex() {
+        return userService.regex();
+    }
+
+    @ApiOperation("通过切面Expression方式配置")
+    @GetMapping("/spel-aop-expression")
+    public List<User> usersFromSpelExpression() {
+        return userService.expression();
+    }
 }

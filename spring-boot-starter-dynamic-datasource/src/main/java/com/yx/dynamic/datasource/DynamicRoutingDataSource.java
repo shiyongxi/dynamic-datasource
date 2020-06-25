@@ -1,6 +1,5 @@
 package com.yx.dynamic.datasource;
 
-import io.seata.rm.datasource.DataSourceProxy;
 import com.p6spy.engine.spy.P6DataSource;
 import com.yx.dynamic.datasource.provider.DynamicDataSourceProvider;
 import com.yx.dynamic.datasource.strategy.DynamicDataSourceStrategy;
@@ -119,10 +118,6 @@ public class DynamicRoutingDataSource extends AbstractRoutingDataSource implemen
             dataSource = new P6DataSource(dataSource);
             log.debug("dynamic-datasource [{}] wrap p6spy plugin", ds);
         }
-        if (seata) {
-            dataSource = new DataSourceProxy(dataSource);
-            log.debug("dynamic-datasource [{}] wrap seata plugin", ds);
-        }
         return dataSource;
     }
 
@@ -214,10 +209,6 @@ public class DynamicRoutingDataSource extends AbstractRoutingDataSource implemen
 
     private void closeDataSource(String name, DataSource dataSource)
             throws NoSuchFieldException, IllegalAccessException, InvocationTargetException {
-        if (seata) {
-            DataSourceProxy dataSourceProxy = (DataSourceProxy) dataSource;
-            dataSource = dataSourceProxy.getTargetDataSource();
-        }
         if (p6spy) {
             Field realDataSourceField = P6DataSource.class.getDeclaredField("realDataSource");
             realDataSourceField.setAccessible(true);

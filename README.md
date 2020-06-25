@@ -16,7 +16,7 @@ spring-boot-starter-dynamic-datasource 是一个基于spring boot的快速集成
 
 1. 数据源分组，适用于多种场景 纯粹多库  读写分离  一主多从  混合模式。
 2. 内置敏感参数加密和启动初始化表结构schema数据库database。
-3. 提供对Druid，P6sy，Jndi的快速集成。
+3. 提供对Druid，P6sy的快速集成。
 4. 简化Druid和HikariCp配置，提供全局参数配置。
 5. 提供自定义数据源来源接口(默认使用yml或properties配置)。
 6. 提供项目启动后增减数据源方案。
@@ -58,17 +58,17 @@ spring:
           url: jdbc:mysql://xx.xx.xx.xx:3306/dynamic
           username: root
           password: 123456
-          driver-class-name: com.mysql.jdbc.Driver
+          driver-class-name: com.mysql.cj.jdbc.Driver
         slave_1:
           url: jdbc:mysql://xx.xx.xx.xx:3307/dynamic
           username: root
           password: 123456
-          driver-class-name: com.mysql.jdbc.Driver
+          driver-class-name: com.mysql.cj.jdbc.Driver
         slave_2:
           url: ENC(xxxxx) # 内置加密,使用请查看详细文档
           username: ENC(xxxxx)
           password: ENC(xxxxx)
-          driver-class-name: com.mysql.jdbc.Driver
+          driver-class-name: com.mysql.cj.jdbc.Driver
           schema: db/schema.sql # 配置则生效,自动初始化表结构
           data: db/data.sql # 配置则生效,自动初始化数据
           continue-on-error: true # 默认true,初始化失败是否继续

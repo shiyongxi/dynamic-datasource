@@ -1,7 +1,7 @@
 package com.yx.dynamic.datasource.provider;
 
 import com.yx.dynamic.datasource.autoconfigure.DataSourceProperty;
-import com.yx.dynamic.datasource.creator.DataSourceCreator;
+import com.yx.dynamic.datasource.creator.DataSourceCreatorImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public abstract class AbstractDataSourceProvider implements DynamicDataSourceProvider {
     @Autowired
-    private DataSourceCreator dataSourceCreator;
+    private DataSourceCreatorImpl dataSourceCreator;
 
     protected Map<String, DataSource> createDataSourceMap(Map<String, DataSourceProperty> dataSourcePropertiesMap) {
         Map<String, DataSource> dataSourceMap = new HashMap<>(dataSourcePropertiesMap.size() * 2);

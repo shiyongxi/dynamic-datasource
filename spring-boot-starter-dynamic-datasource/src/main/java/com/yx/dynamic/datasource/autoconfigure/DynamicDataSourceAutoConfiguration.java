@@ -1,11 +1,10 @@
 package com.yx.dynamic.datasource.autoconfigure;
 
-import com.yx.dynamic.datasource.DynamicDataSourceConfigure;
 import com.yx.dynamic.datasource.DynamicRoutingDataSource;
-import com.yx.dynamic.datasource.aop.DynamicDataSourceAdvisor;
 import com.yx.dynamic.datasource.aop.DynamicDataSourceAnnotationAdvisor;
 import com.yx.dynamic.datasource.aop.DynamicDataSourceAnnotationInterceptor;
 import com.yx.dynamic.datasource.autoconfigure.druid.DruidDynamicDataSourceConfiguration;
+import com.yx.dynamic.datasource.plugin.MasterSlaveAutoRoutingPlugin;
 import com.yx.dynamic.datasource.processor.DsHeaderProcessor;
 import com.yx.dynamic.datasource.processor.DsProcessor;
 import com.yx.dynamic.datasource.processor.DsSessionProcessor;
@@ -15,7 +14,6 @@ import com.yx.dynamic.datasource.provider.YmlDynamicDataSourceProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -23,7 +21,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.Ordered;
 
 import javax.sql.DataSource;
 import java.util.Map;
@@ -38,7 +35,7 @@ import java.util.Map;
 @AllArgsConstructor
 @EnableConfigurationProperties(DynamicDataSourceProperties.class)
 @AutoConfigureBefore(DataSourceAutoConfiguration.class)
-@Import(value = {DruidDynamicDataSourceConfiguration.class, DynamicDataSourceCreatorAutoConfiguration.class})
+@Import(value = {DruidDynamicDataSourceConfiguration.class, DynamicDataSourceCreatorAutoConfiguration.class, SqlSessionFactoryAutoConfiguration.class})
 @ConditionalOnProperty(prefix = DynamicDataSourceProperties.PREFIX, name = "enabled", havingValue = "true", matchIfMissing = true)
 public class DynamicDataSourceAutoConfiguration {
 
@@ -60,7 +57,6 @@ public class DynamicDataSourceAutoConfiguration {
         dataSource.setStrategy(properties.getStrategy());
         dataSource.setProvider(dynamicDataSourceProvider);
         dataSource.setP6spy(properties.getP6spy());
-        dataSource.setSeata(properties.getSeata());
         return dataSource;
     }
 
@@ -86,11 +82,8 @@ public class DynamicDataSourceAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(DynamicDataSourceConfigure.class)
-    public DynamicDataSourceAdvisor dynamicAdvisor(DynamicDataSourceConfigure dynamicDataSourceConfigure, DsProcessor dsProcessor) {
-        DynamicDataSourceAdvisor advisor = new DynamicDataSourceAdvisor(dynamicDataSourceConfigure.getMatchers());
-        advisor.setDsProcessor(dsProcessor);
-        advisor.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return advisor;
+    @ConditionalOnMissingBean
+    public MasterSlaveAutoRoutingPlugin getMasterSlaveAutoRoutingPlugin() {
+        return new MasterSlaveAutoRoutingPlugin();
     }
 }

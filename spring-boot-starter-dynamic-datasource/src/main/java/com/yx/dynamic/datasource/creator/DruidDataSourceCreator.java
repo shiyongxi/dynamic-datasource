@@ -12,7 +12,9 @@ import com.yx.dynamic.datasource.autoconfigure.druid.DruidSlf4jConfig;
 import com.yx.dynamic.datasource.autoconfigure.druid.DruidWallConfigUtil;
 import com.yx.dynamic.datasource.exception.ErrorCreateDataSourceException;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 
@@ -27,8 +29,10 @@ import java.util.Properties;
  * @Date: 2020-06-16 17:10
  * @Description: Druid数据源创建器
  */
+@Slf4j
 @Data
-public class DruidDataSourceCreator {
+@ConditionalOnClass(DruidDataSource.class)
+public class DruidDataSourceCreator implements DataSourceCreator {
     private DruidConfig druidConfig;
 
     @Autowired(required = false)
@@ -36,8 +40,15 @@ public class DruidDataSourceCreator {
 
     public DruidDataSourceCreator(DruidConfig druidConfig) {
         this.druidConfig = druidConfig;
+
+        try {
+            Class.forName(DruidDataSource.class.getName());
+            log.debug("dynamic-datasource detect druid");
+        } catch (ClassNotFoundException ignored) {
+        }
     }
 
+    @Override
     public DataSource createDataSource(DataSourceProperty dataSourceProperty) {
         DruidDataSource dataSource = new DruidDataSource();
         dataSource.setUsername(dataSourceProperty.getUsername());

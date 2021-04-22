@@ -34,7 +34,7 @@
         <!-- servlet -->
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
 
-        <mybatis.version>3.5.4</mybatis.version>
+        <mybatis.version>3.5.6</mybatis.version>
         <seata.version>1.2.0</seata.version>
         <p6spy.version>3.8.7</p6spy.version>
         <HikariCP.version>3.4.2</HikariCP.version>
